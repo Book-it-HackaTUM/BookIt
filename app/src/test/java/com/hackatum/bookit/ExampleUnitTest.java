@@ -1,4 +1,4 @@
-package com.example.bookit;
+package com.hackatum.bookit;
 
 import org.junit.Test;
 
