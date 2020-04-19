@@ -5,6 +5,7 @@ import android.app.Activity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -23,8 +24,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hackatum.bookit.R;
-import com.hackatum.bookit.ui.login.LoginViewModel;
-import com.hackatum.bookit.ui.login.LoginViewModelFactory;
+import com.hackatum.bookit.data.model.LoggedInCustomer;
+import com.hackatum.bookit.data.model.LoggedInProvider;
+import com.hackatum.bookit.data.model.LoggedInUser;
+import com.hackatum.bookit.ui.profiles.CustomerProfile;
+import com.hackatum.bookit.ui.profiles.ProviderProfile;
+import com.hackatum.bookit.ui.register.UserTypeSelectionActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -39,6 +44,7 @@ public class LoginActivity extends AppCompatActivity {
 
         final EditText usernameEditText = findViewById(R.id.username);
         final EditText passwordEditText = findViewById(R.id.password);
+        final TextView registerTextView = findViewById(R.id.register);
         final Button loginButton = findViewById(R.id.login);
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
 
@@ -69,7 +75,7 @@ public class LoginActivity extends AppCompatActivity {
                     showLoginFailed(loginResult.getError());
                 }
                 if (loginResult.getSuccess() != null) {
-                    updateUiWithUser(loginResult.getSuccess());
+                    updateUiWithUser(loginResult.getSuccess(), loginViewModel.getLoggedInUser());
                 }
                 setResult(Activity.RESULT_OK);
 
@@ -117,15 +123,35 @@ public class LoginActivity extends AppCompatActivity {
                         passwordEditText.getText().toString());
             }
         });
+
+        registerTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, UserTypeSelectionActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
-    private void updateUiWithUser(LoggedInUserView model) {
-        String welcome = getString(R.string.welcome) + model.getDisplayName();
-        // TODO : initiate successful logged in experience
+    private void updateUiWithUser(LoggedInUserView model, LoggedInUser loggedInUser) {
+        String welcome = getString(R.string.welcome) + model.getDisplayName() + "!";
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
+
+        if(loggedInUser instanceof LoggedInProvider){
+            Intent intent = new Intent(LoginActivity.this, ProviderProfile.class);
+            intent.putExtra("loggedInUser", (LoggedInProvider)loggedInUser);
+            startActivity(intent);
+        }
+
+        if(loggedInUser instanceof LoggedInCustomer){
+            Intent intent = new Intent(LoginActivity.this, CustomerProfile.class);
+            intent.putExtra("loggedInUser", (LoggedInCustomer)loggedInUser);
+            startActivity(intent);
+        }
     }
 
     private void showLoginFailed(@StringRes Integer errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
     }
+
 }

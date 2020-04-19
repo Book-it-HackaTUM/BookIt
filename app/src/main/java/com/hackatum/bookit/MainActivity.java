@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.hackatum.bookit.data.model.DBHandler;
 import com.hackatum.bookit.ui.login.LoginActivity;
 
 import java.util.Timer;
@@ -12,6 +13,7 @@ import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
+    DBHandler db;
     Timer timer;
 
     @Override
@@ -19,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        db = DBHandler.createDBHandler(this);
         timer = new Timer();
 
         timer.schedule(new TimerTask() {
@@ -27,6 +30,6 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(intent);
             }
-        },5000);
+        },1000);
     }
 }

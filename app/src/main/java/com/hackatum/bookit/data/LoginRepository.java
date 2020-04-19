@@ -1,5 +1,7 @@
 package com.hackatum.bookit.data;
 
+import android.content.Context;
+
 import com.hackatum.bookit.data.model.LoggedInUser;
 
 /**
